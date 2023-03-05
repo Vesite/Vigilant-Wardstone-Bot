@@ -4,7 +4,7 @@ from discord import app_commands # ?
 
 import configparser
 
-import requests
+import requests # API
 
 from bs4 import BeautifulSoup # To remove the <html-tags>
 
@@ -14,9 +14,6 @@ config.read('config.ini')
 league_api_key = config['DEFAULT']['league_api_key']
 
 
-
-
-#config.read("D:\Folders\Python\Discord Bot\Vigilant Wardstone Bot\config.ini")
 
 
 
@@ -44,7 +41,6 @@ class Lookup(commands.Cog):
 
 
 
-
     # Lookup command
     @app_commands.command(name="lookup", description="Lookup some information about a champion")
     @app_commands.describe(champion="Name of the champion")
@@ -57,18 +53,16 @@ class Lookup(commands.Cog):
                                          discord.app_commands.Choice(name="R", value="R")])
     async def lookup(self, interaction: discord.Interaction, champion: str, lookup_type: discord.app_commands.Choice[str]):
 
-        # Debug Test Message
-        #await say(interaction, f"Champ: \"{champion}\", with option: \"{lookup_option.name}\"")
+        # Debug Message
+        # await say(interaction, f"Champ: \"{champion}\", with option: \"{lookup_option.name}\"")
 
         # Check if the champion name is a valid champion name
         champ_names = get_champ_names_list()
         champion = champion.capitalize()
 
-        if not champion in champ_names:
-            print("NOT valid champion input")
+        if not champion in champ_names: # Not Valid Champion
             await say(interaction, f"\"{champion}\" is not a valid Champion")
-        else:
-            print("Valid champion input")
+        else: # Valid Champion
 
             champion_url = f"http://ddragon.leagueoflegends.com/cdn/13.4.1/data/en_US/champion/{champion}.json?api_key={league_api_key}&champData=all&dataById=false"
             response = requests.get(champion_url)
@@ -123,7 +117,7 @@ def get_most_recent_version():
     return version
 
 def get_champ_names_list():
-    # Replace with current version and language code of your choice
+
     version = get_most_recent_version()
     language = "en_US"
 
@@ -133,10 +127,6 @@ def get_champ_names_list():
     data = response.json()
 
     champion_names = [champion["name"] for champion in data["data"].values()]
-
-    # Convert to string
-    #separator = ", "
-    #result_string = separator.join(champion_names)
 
     return champion_names
 
@@ -226,7 +216,6 @@ async def say_champ_passive(interaction, champion, champion_data):
     await interaction.response.send_message(embed=embed)
 
 # -------------------------------------------------------------------------------------------------------------------
-
 
 
 
