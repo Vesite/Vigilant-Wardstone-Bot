@@ -29,7 +29,7 @@ class Lookup(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self) -> None:
-        
+
         # Sync all commands to all servers
         await sync(self)
 
@@ -37,7 +37,7 @@ class Lookup(commands.Cog):
         return
 
 
-    
+
 
 
 
@@ -62,10 +62,17 @@ class Lookup(commands.Cog):
 
         if not champion in champ_names: # Not Valid Champion
             await say(interaction, f"\"{champion}\" is not a valid Champion")
-        else: # Valid Champion
+        else:
+            # Valid Champion
+            base_url = f"http://ddragon.leagueoflegends.com/cdn/13.4.1/data/en_US/champion/{champion}.json"
 
-            champion_url = f"http://ddragon.leagueoflegends.com/cdn/13.4.1/data/en_US/champion/{champion}.json?api_key={league_api_key}&champData=all&dataById=false"
-            response = requests.get(champion_url)
+            params = {
+                "api_key": league_api_key,
+                "champData": "all",
+                "dataById": "false",
+            }
+
+            response = requests.get(base_url, params=params)
             response.raise_for_status()  # Raises an exception for non-200 status codes
 
             if response.status_code == 200:
@@ -87,7 +94,7 @@ class Lookup(commands.Cog):
             else:
                 print(f"Error {response.status_code}: {response.text}")
 
-        
+
 # -------------------------------------------------------------------------------------------------------------------
 
 
@@ -99,7 +106,7 @@ class Lookup(commands.Cog):
 
 
 
-    
+
 
 
 
@@ -137,7 +144,7 @@ async def sync(self):
     guilds = self.bot.guilds
     for guild in guilds:
         self.bot.tree.clear_commands(guild=guild)
-    
+
     # Sync all commands?
     fmt = await self.bot.tree.sync()
     print(f"Synced {len(fmt)} commands to the all servers this bot is in")
